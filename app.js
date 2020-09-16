@@ -1,17 +1,26 @@
 const chalk = require('chalk');
-var express = require('express');
-var debug = require('debug')('app');
-var morgan = require('morgan');
-var path = require('path');
+const express = require('express');
+const debug = require('debug')('app');
+const morgan = require('morgan');
+const path = require('path');
 
-var app = express();
+const port = process.env.port || 3000;
 
-app.use(morgan('combined'))
+const app = express();
 
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname, 'views/index.html'))
-})
+app.use(morgan('tiny'));
+app.use(express.static(path.join(__dirname, '/public/')));
+app.use('css', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/css')));
+app.use('js', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/js')));
+app.use('js', express.static(path.join(__dirname, '/node_modules/jquery/dist')));
+app.set('views', './public/src/views');
+app.set('view engine', 'ejs');
 
-app.listen(3000, function() {
-    debug(`Listening on port ${chalk.green(3000)}`)
-})
+app.get('/', (req, res) => {
+  // res.sendFile(path.join(__dirname, 'views/index.html'));
+  res.render('index', { list: ['a', 'b'], title: 'My Library' });
+});
+
+app.listen(port, () => {
+  debug(`Listening on port ${chalk.green(port)}`);
+});
